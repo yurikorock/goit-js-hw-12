@@ -29,11 +29,14 @@ form.addEventListener('submit', event => {
 
     return;
   }
+
   loader.style.display = 'block';
+
   getImages(inputValue)
     .then(images => {
       if (images.length === 0) {
         gallery.innerHTML = ''; // Очищаємо галерею якщо масив пустий
+
         iziToast.show({
           message:
             'Sorry, there are no images matching your search query. Please try again!',
