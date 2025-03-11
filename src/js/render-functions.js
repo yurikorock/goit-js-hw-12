@@ -15,8 +15,6 @@ export function clearGallery() {
 }
 
 export function renderGallery(images) {
-  clearGallery();
-
   const markup = images
     .map(image => {
       // отримали значення і робимо деструктурізацію по ключовим значенням

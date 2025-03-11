@@ -10,15 +10,18 @@ const input = document.querySelector('.input-form');
 // const btnSearch = document.querySelector('.btn-submit');
 const loader = document.querySelector('.loader');
 const gallery = document.querySelector('.gallery');
+const btnLoadMore = document.querySelector('.btn-load-more');
 
-form.addEventListener('submit', event => {
+let searchQuery = '';
+
+form.addEventListener('submit', async event => {
   // console.log('Button pressed');
   event.preventDefault();
-
-  const inputValue = input.value.trim();
+  btnLoadMore.classList.add('is-hidden');
+  searchQuery = input.value.trim();
   // console.log(inputValue);
 
-  if (inputValue === '') {
+  if (searchQuery === '') {
     iziToast.show({
       message: 'Поле не може бути порожнім. Введіть текст для пошуку...',
       messageColor: 'white',
@@ -31,9 +34,9 @@ form.addEventListener('submit', event => {
   }
 
   loader.style.display = 'block';
-
-  getImages(inputValue)
-    .then(images => {
+  clearGallery(); //очищаємо галерею перед новим пошуком
+  try {
+    getImages(searchQuery).then(images => {
       if (images.length === 0) {
         gallery.innerHTML = ''; // Очищаємо галерею якщо масив пустий
 
@@ -49,11 +52,16 @@ form.addEventListener('submit', event => {
         return;
       }
       renderGallery(images);
-    })
-    .catch(error => console.log(error))
-    .finally(() => {
-      loader.style.display = 'none';
+
+      btnLoadMore.classList.remove('is-hidden');
     });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    loader.style.display = 'none';
+  }
 
   form.reset();
 });
+//додаємо слухач на кнопку для завантаження зображень (додати більше)
+btnLoadMore.addEventListener('click', onLoadMore);
