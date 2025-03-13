@@ -65,3 +65,24 @@ form.addEventListener('submit', async event => {
 });
 //додаємо слухач на кнопку для завантаження зображень (додати більше)
 btnLoadMore.addEventListener('click', onLoadMore);
+
+async function onLoadMore() {
+  loader.style.display = 'block';
+  try {
+    const images = await getImages(searchQuery);
+    if (images.length === 0) {
+      btnLoadMore.classList.remove('is-hidden');
+      return;
+    }
+    renderGallery(images);
+
+    if (images.length < 15) {
+      btnLoadMore.classList.add('is-hidden');
+      return;
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    loader.style.display = 'none';
+  }
+}
