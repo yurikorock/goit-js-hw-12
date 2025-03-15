@@ -52,24 +52,3 @@ export async function getImages(query) {
     return [];
   }
 }
-// code before refactoring
-
-// export function getImages(query) {
-//   return axios
-//     .get('/', {
-//       params: {
-//         key: API_KEY,
-//         q: query,
-//         image_type: 'photo',
-//         orientation: 'horizontal',
-//         safesearch: true,
-//       },
-//     })
-//     .then(response => {
-//       return response.data.hits; // Отримані дані
-//     })
-//     .catch(error => {
-//       console.error('Помилка:', error);
-//       return [];
-//     });
-// }

@@ -7,10 +7,12 @@ import { clearGallery } from './js/render-functions';
 
 const form = document.querySelector('.form');
 const input = document.querySelector('.input-form');
-// const btnSearch = document.querySelector('.btn-submit');
 const loader = document.querySelector('.loader');
 const gallery = document.querySelector('.gallery');
 const btnLoadMore = document.querySelector('.btn-load-more');
+
+//додаємо слухач на кнопку для завантаження зображень (додати більше)
+btnLoadMore.addEventListener('click', onLoadMore);
 
 let searchQuery = '';
 
@@ -19,7 +21,6 @@ form.addEventListener('submit', async event => {
   event.preventDefault();
   btnLoadMore.classList.add('is-hidden');
   searchQuery = input.value.trim();
-  // console.log(inputValue);
 
   if (searchQuery === '') {
     iziToast.show({
@@ -62,8 +63,6 @@ form.addEventListener('submit', async event => {
 
   form.reset();
 });
-//додаємо слухач на кнопку для завантаження зображень (додати більше)
-btnLoadMore.addEventListener('click', onLoadMore);
 
 async function onLoadMore() {
   loader.style.display = 'block';
