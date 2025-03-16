@@ -7,31 +7,10 @@ axios.defaults.baseURL = 'https://pixabay.com/api/';
 const API_KEY = '49133693-4042ac5cb8c0a8ba13ba0f36c';
 const BASE_URL = 'https://pixabay.com/api/';
 
-const btnLoadMore = document.querySelector('.btn-load-more');
-
 let page = 1; // початкова сторінка, перший запит
-let prevQuery = ''; // попередній запит
-let limit = 15; //кількість елементів у групі
-// Загальна кількість сторінок у колекції
-const totalPages = Math.ceil(500 / limit);
 
-export async function getImages(query) {
-  //Перевірка перед новим запитом
-  if (page > totalPages) {
-    btnLoadMore.classList.add('is-hidden');
-    return iziToast.error({
-      position: 'topRight',
-      message: "We're sorry, but you've reached the end of search results.",
-    });
-  }
-
+export async function getImages(query, page) {
   try {
-    //перевіряємо чи новий запит збігається з попереднім
-    if (query !== prevQuery) {
-      page = 1;
-      prevQuery = query;
-    }
-
     const response = await axios.get('/', {
       params: {
         key: API_KEY,
@@ -44,7 +23,12 @@ export async function getImages(query) {
       },
     });
 
-    page++; //збільшуємо на наступну сторінку при успішному наступного запиті
+    if (response.data.hits.length === 0) {
+      iziToast.error({
+        position: 'topRight',
+        message: 'Sorry, there are no images matching your search query.',
+      });
+    }
 
     return response.data.hits; // Отримані дані
   } catch (error) {

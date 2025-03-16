@@ -12,15 +12,17 @@ const gallery = document.querySelector('.gallery');
 const btnLoadMore = document.querySelector('.btn-load-more');
 
 //додаємо слухач на кнопку для завантаження зображень (додати більше)
-btnLoadMore.addEventListener('click', onLoadMore);
+// btnLoadMore.addEventListener('click', onLoadMore);
 
 let searchQuery = '';
+let page = 1;
+const perPage = 15;
 
 form.addEventListener('submit', async event => {
   // console.log('Button pressed');
   event.preventDefault();
-  btnLoadMore.classList.add('is-hidden');
   searchQuery = input.value.trim();
+  page = 1;
 
   if (searchQuery === '') {
     iziToast.show({
@@ -34,10 +36,12 @@ form.addEventListener('submit', async event => {
     return;
   }
 
+  btnLoadMore.classList.add('is-hidden');
   loader.style.display = 'block';
   clearGallery(); //очищаємо галерею перед новим пошуком
+
   try {
-    const images = await getImages(searchQuery);
+    const images = await getImages(searchQuery, page);
     if (images.length === 0) {
       gallery.innerHTML = ''; // Очищаємо галерею якщо масив пустий
 
@@ -53,8 +57,9 @@ form.addEventListener('submit', async event => {
       return;
     }
     renderGallery(images);
-
-    btnLoadMore.classList.remove('is-hidden');
+    if (images.length === perPage) {
+      btnLoadMore.classList.remove('is-hidden'); // якщо ще є зображення
+    }
   } catch (error) {
     console.log(error);
   } finally {
@@ -64,28 +69,29 @@ form.addEventListener('submit', async event => {
   form.reset();
 });
 
-async function onLoadMore() {
+btnLoadMore.addEventListener('click', async () => {
   loader.style.display = 'block';
-  try {
-    const images = await getImages(searchQuery);
-    if (images.length === 0) {
-      btnLoadMore.classList.remove('is-hidden');
-      return;
-    }
-    renderGallery(images);
-    scrollPageAfterLoad(); // функція яка буде скролити галерею при
-    //нажатті кнопки завантажити ще
+  page++;
 
-    if (images.length < 15) {
+  try {
+    const images = await getImages(searchQuery, page);
+    if (images.length === 0) {
       btnLoadMore.classList.add('is-hidden');
       return;
     }
+
+    renderGallery(images);
+    scrollPageAfterLoad(); // Плавна прокрутка після завантаження
+
+    if (images.length < perPage) {
+      btnLoadMore.classList.add('is-hidden'); // ховаємо кнопку, якщо вже немає зображень
+    }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   } finally {
     loader.style.display = 'none';
   }
-}
+});
 
 function scrollPageAfterLoad() {
   const galleryItems = document.querySelectorAll('.gallery-item');
